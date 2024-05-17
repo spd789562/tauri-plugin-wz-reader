@@ -14,6 +14,9 @@ mod commands;
 mod error;
 mod models;
 
+pub mod handlers;
+pub mod utils;
+
 pub use error::{Error, Result};
 
 use desktop::WzReader;

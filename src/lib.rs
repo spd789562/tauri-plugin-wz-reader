@@ -50,11 +50,20 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
     let app = Builder::new("wz-reader");
 
     #[cfg(not(feature = "axum-server"))]
-    let app = app.invoke_handler(tauri::generate_handler![commands::execute, commands::init]);
+    let app = app.invoke_handler(tauri::generate_handler![
+        commands::execute,
+        commands::init,
+        commands::parse_node,
+        commands::unparse_node,
+        commands::get_node_info,
+    ]);
     #[cfg(feature = "axum-server")]
     let app = app.invoke_handler(tauri::generate_handler![
         commands::execute,
         commands::init,
+        commands::parse_node,
+        commands::unparse_node,
+        commands::get_node_info,
         commands::get_server_url
     ]);
 

@@ -1,7 +1,20 @@
 #[cfg(not(feature = "axum-server"))]
-const COMMANDS: &[&str] = &["init", "execute"];
+const COMMANDS: &[&str] = &[
+    "init",
+    "execute",
+    "parse_node",
+    "unparse_node",
+    "get_node_info",
+];
 #[cfg(feature = "axum-server")]
-const COMMANDS: &[&str] = &["init", "execute", "get_server_url"];
+const COMMANDS: &[&str] = &[
+    "init",
+    "execute",
+    "get_server_url",
+    "parse_node",
+    "unparse_node",
+    "get_node_info",
+];
 
 fn main() {
     tauri_plugin::Builder::new(COMMANDS)

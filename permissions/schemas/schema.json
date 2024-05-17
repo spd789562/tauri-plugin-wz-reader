@@ -309,6 +309,20 @@
           ]
         },
         {
+          "description": "allow-get-node-info -> Enables the get_node_info command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-get-node-info"
+          ]
+        },
+        {
+          "description": "deny-get-node-info -> Denies the get_node_info command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-get-node-info"
+          ]
+        },
+        {
           "description": "allow-get-server-url -> Enables the get_server_url command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -337,17 +351,31 @@
           ]
         },
         {
-          "description": "allow-ping -> Enables the ping command without any pre-configured scope.",
+          "description": "allow-parse-node -> Enables the parse_node command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "allow-ping"
+            "allow-parse-node"
           ]
         },
         {
-          "description": "deny-ping -> Denies the ping command without any pre-configured scope.",
+          "description": "deny-parse-node -> Denies the parse_node command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "deny-ping"
+            "deny-parse-node"
+          ]
+        },
+        {
+          "description": "allow-unparse-node -> Enables the unparse_node command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-unparse-node"
+          ]
+        },
+        {
+          "description": "deny-unparse-node -> Denies the unparse_node command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-unparse-node"
           ]
         },
         {

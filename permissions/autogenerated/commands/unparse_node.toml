@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-unparse-node"
+description = "Enables the unparse_node command without any pre-configured scope."
+commands.allow = ["unparse_node"]
+
+[[permission]]
+identifier = "deny-unparse-node"
+description = "Denies the unparse_node command without any pre-configured scope."
+commands.deny = ["unparse_node"]

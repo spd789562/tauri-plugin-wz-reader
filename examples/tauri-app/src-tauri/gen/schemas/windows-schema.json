@@ -2068,6 +2068,13 @@
           ]
         },
         {
+          "description": "wz-reader:allow-get-node-info -> Enables the get_node_info command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "wz-reader:allow-get-node-info"
+          ]
+        },
+        {
           "description": "wz-reader:allow-get-server-url -> Enables the get_server_url command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -2082,10 +2089,17 @@
           ]
         },
         {
-          "description": "wz-reader:allow-ping -> Enables the ping command without any pre-configured scope.",
+          "description": "wz-reader:allow-parse-node -> Enables the parse_node command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "wz-reader:allow-ping"
+            "wz-reader:allow-parse-node"
+          ]
+        },
+        {
+          "description": "wz-reader:allow-unparse-node -> Enables the unparse_node command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "wz-reader:allow-unparse-node"
           ]
         },
         {
@@ -2093,6 +2107,13 @@
           "type": "string",
           "enum": [
             "wz-reader:deny-execute"
+          ]
+        },
+        {
+          "description": "wz-reader:deny-get-node-info -> Denies the get_node_info command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "wz-reader:deny-get-node-info"
           ]
         },
         {
@@ -2110,10 +2131,17 @@
           ]
         },
         {
-          "description": "wz-reader:deny-ping -> Denies the ping command without any pre-configured scope.",
+          "description": "wz-reader:deny-parse-node -> Denies the parse_node command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "wz-reader:deny-ping"
+            "wz-reader:deny-parse-node"
+          ]
+        },
+        {
+          "description": "wz-reader:deny-unparse-node -> Denies the unparse_node command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "wz-reader:deny-unparse-node"
           ]
         }
       ]

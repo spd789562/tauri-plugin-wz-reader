@@ -1,3 +1,4 @@
+use crate::Error;
 use axum::{
     async_trait,
     extract::{FromRef, FromRequestParts, Path, Query, Request, State},
@@ -10,7 +11,7 @@ use axum::{
 use serde::Deserialize;
 use wz_reader::{node, property::WzValue, WzNodeArc, WzObjectType};
 
-pub async fn app(node: WzNodeArc, port: u16) -> std::io::Result<()> {
+pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))
@@ -27,7 +28,7 @@ pub async fn app(node: WzNodeArc, port: u16) -> std::io::Result<()> {
 
     let listener = tokio::net::TcpListener::bind(host).await?;
 
-    serve(listener, app).await
+    serve(listener, app).await.map_err(Error::from)
 }
 
 async fn hello() -> &'static str {
@@ -40,47 +41,26 @@ async fn get_print_full_path(
     Ok(node.read().unwrap().get_full_path())
 }
 
-enum NodeFindError {
-    Uninitialized,
-    NotFound,
-    TypeMismatch,
-    ServerError,
-    ParseError,
-}
-impl IntoResponse for NodeFindError {
+impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
-            NodeFindError::Uninitialized => (
-                StatusCode::BAD_REQUEST,
-                "wz uninitialized, please use init command first",
-            )
-                .into_response(),
-            NodeFindError::NotFound => (StatusCode::NOT_FOUND, "node not found").into_response(),
-            NodeFindError::TypeMismatch => {
-                (StatusCode::BAD_REQUEST, "node type can't use on this route").into_response()
+            Error::Io(_) => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response(),
+            Error::InitWzFailed => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),
+            Error::NotInitialized => (StatusCode::FORBIDDEN, self.to_string()).into_response(),
+            Error::NodeError(_) => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),
+            Error::NodeNotFound => (StatusCode::NOT_FOUND, self.to_string()).into_response(),
+            Error::NodeTypeMismatch(_) => {
+                (StatusCode::BAD_REQUEST, self.to_string()).into_response()
             }
-            NodeFindError::ServerError => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                "something wrong when parsing data",
-            )
-                .into_response(),
-            NodeFindError::ParseError => {
-                (StatusCode::BAD_REQUEST, "node parse error").into_response()
+            Error::JsonParseError(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
-        }
-    }
-}
-impl From<node::Error> for NodeFindError {
-    fn from(e: node::Error) -> Self {
-        match e {
-            node::Error::NodeNotFound => NodeFindError::NotFound,
-            _ => NodeFindError::ParseError,
         }
     }
 }
 
 #[derive(Deserialize)]
-struct GetJsonParam {
+pub struct GetJsonParam {
     simple: Option<bool>,
     force_parse: Option<bool>,
     sort: Option<bool>,
@@ -94,7 +74,7 @@ async fn root_check_middleware(
     {
         let root_read = root.read().unwrap();
         if matches!(root_read.object_type, WzObjectType::Value(WzValue::Null)) {
-            return NodeFindError::Uninitialized.into_response();
+            return Error::NotInitialized.into_response();
         }
     }
 
@@ -126,9 +106,12 @@ where
         let force_parse = query.force_parse.unwrap_or(false);
 
         let target = if force_parse {
-            root.at_path_parsed(&path).map_err(NodeFindError::from)
+            root.at_path_parsed(&path).map_err(|e| match e {
+                node::Error::NodeNotFound => Error::NodeNotFound,
+                _ => Error::NodeError(e),
+            })
         } else {
-            root.at_path(&path).ok_or(NodeFindError::NotFound)
+            root.at_path(&path).ok_or(Error::NodeNotFound)
         };
 
         target

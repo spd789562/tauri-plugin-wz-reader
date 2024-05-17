@@ -9,10 +9,14 @@ pub enum Error {
     Io(#[from] std::io::Error),
     #[error("init wz failed")]
     InitWzFailed,
+    #[error("root wz not yet initialized, please use init command first")]
+    NotInitialized,
     #[error("node error: {0}")]
     NodeError(#[from] node::Error),
     #[error("node not found")]
     NodeNotFound,
+    #[error("node type mismatch, can only use on {0}")]
+    NodeTypeMismatch(&'static str),
     #[error("json parse error")]
     JsonParseError(#[from] serde_json::Error),
     #[cfg(mobile)]

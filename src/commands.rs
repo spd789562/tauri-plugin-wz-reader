@@ -1,7 +1,6 @@
-use crate::{Error, Result, WzReader};
+use crate::{handlers, utils, Error, Result, WzReader};
 use tauri::{async_runtime, command, AppHandle, Runtime, State, Window};
 use wz_reader::node::parse_node;
-use wz_reader::util::resolve_base;
 use wz_reader::version::WzMapleVersion;
 
 #[cfg(feature = "axum-server")]
@@ -48,9 +47,8 @@ pub(crate) async fn init<R: Runtime>(
         _ => WzMapleVersion::UNKNOWN,
     });
 
-    let base_node = async_runtime::spawn_blocking(move || resolve_base(&path, version))
+    let base_node = utils::resolve_base(&path, version)
         .await
-        .unwrap()
         .map_err(|_| crate::Error::InitWzFailed)?;
 
     state.replace_root(&base_node);

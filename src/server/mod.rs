@@ -1,3 +1,4 @@
+pub mod controller;
 pub mod extractors;
 pub mod middlewares;
 pub mod models;
@@ -18,6 +19,7 @@ pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))
+        .nest("/mapping", controller::mapping_router())
         .route("/node/*path", get(get_print_full_path))
         .route_layer(axum::middleware::from_fn_with_state(
             layer_state,

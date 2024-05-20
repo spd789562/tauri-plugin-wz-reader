@@ -39,7 +39,7 @@ pub async fn cache_control_from_query_middleware(
 
     res.headers_mut().insert(
         header::CACHE_CONTROL,
-        format!("max-age={}", cache_time).parse().unwrap(),
+        format!("public, max-age={}", cache_time).parse().unwrap(),
     );
 
     res

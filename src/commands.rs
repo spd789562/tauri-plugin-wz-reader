@@ -88,6 +88,33 @@ pub(crate) async fn get_node_info<R: Runtime>(
 }
 
 #[command]
+pub(crate) async fn get_childs_info<R: Runtime>(
+    _app: AppHandle<R>,
+    _window: Window<R>,
+    state: State<'_, WzReader<R>>,
+    path: String,
+) -> Result<Vec<models::NodeInfo>> {
+    let node = state.node.read().unwrap();
+
+    let node = node.at_path(&path).ok_or(Error::NodeNotFound)?;
+
+    let node_read = node.read().unwrap();
+
+    Ok(node_read
+        .children
+        .values()
+        .map(|node| {
+            let node_read = node.read().unwrap();
+            models::NodeInfo {
+                name: node_read.name.to_string(),
+                _type: to_string(&node_read.object_type).unwrap(),
+                has_child: !node_read.children.is_empty(),
+            }
+        })
+        .collect())
+}
+
+#[command]
 pub(crate) async fn execute<R: Runtime>(
     _app: AppHandle<R>,
     _window: Window<R>,

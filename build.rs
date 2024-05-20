@@ -5,6 +5,7 @@ const COMMANDS: &[&str] = &[
     "parse_node",
     "unparse_node",
     "get_node_info",
+    "get_childs_info",
 ];
 #[cfg(feature = "axum-server")]
 const COMMANDS: &[&str] = &[
@@ -13,6 +14,7 @@ const COMMANDS: &[&str] = &[
     "get_server_url",
     "parse_node",
     "unparse_node",
+    "get_childs_info",
     "get_node_info",
 ];
 

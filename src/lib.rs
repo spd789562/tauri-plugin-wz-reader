@@ -56,6 +56,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         commands::parse_node,
         commands::unparse_node,
         commands::get_node_info,
+        commands::get_childs_info,
     ]);
     #[cfg(feature = "axum-server")]
     let app = app.invoke_handler(tauri::generate_handler![
@@ -64,6 +65,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         commands::parse_node,
         commands::unparse_node,
         commands::get_node_info,
+        commands::get_childs_info,
         commands::get_server_url
     ]);
 

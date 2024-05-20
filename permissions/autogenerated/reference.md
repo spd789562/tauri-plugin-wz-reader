@@ -2,6 +2,8 @@
 |------|-----|
 |`allow-execute`|Enables the execute command without any pre-configured scope.|
 |`deny-execute`|Denies the execute command without any pre-configured scope.|
+|`allow-get-childs-info`|Enables the get_childs_info command without any pre-configured scope.|
+|`deny-get-childs-info`|Denies the get_childs_info command without any pre-configured scope.|
 |`allow-get-node-info`|Enables the get_node_info command without any pre-configured scope.|
 |`deny-get-node-info`|Denies the get_node_info command without any pre-configured scope.|
 |`allow-get-server-url`|Enables the get_server_url command without any pre-configured scope.|

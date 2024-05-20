@@ -1,24 +1,27 @@
+pub mod extractors;
+pub mod middlewares;
+pub mod models;
+
 use crate::Error;
+
 use axum::{
-    async_trait,
-    extract::{FromRef, FromRequestParts, Path, Query, Request, State},
-    http::{header, request::Parts, StatusCode},
-    middleware::{self, Next},
+    http::StatusCode,
     response::{IntoResponse, Response},
     routing::get,
     serve, Router,
 };
-use serde::Deserialize;
-use wz_reader::{node, property::WzValue, WzNodeArc, WzObjectType};
+use wz_reader::WzNodeArc;
+
+use extractors::TargetNodeExtractor;
 
 pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))
         .route("/node/*path", get(get_print_full_path))
-        .route_layer(middleware::from_fn_with_state(
+        .route_layer(axum::middleware::from_fn_with_state(
             layer_state,
-            root_check_middleware,
+            middlewares::root_check_middleware,
         ))
         .with_state(node);
 
@@ -56,66 +59,5 @@ impl IntoResponse for Error {
                 (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
         }
-    }
-}
-
-#[derive(Deserialize)]
-pub struct GetJsonParam {
-    simple: Option<bool>,
-    force_parse: Option<bool>,
-    sort: Option<bool>,
-}
-
-async fn root_check_middleware(
-    State(root): State<WzNodeArc>,
-    req: Request,
-    next: Next,
-) -> Response {
-    {
-        let root_read = root.read().unwrap();
-        if matches!(root_read.object_type, WzObjectType::Value(WzValue::Null)) {
-            return Error::NotInitialized.into_response();
-        }
-    }
-
-    next.run(req).await
-}
-
-pub struct TargetNodeExtractor(WzNodeArc);
-
-#[async_trait]
-impl<S> FromRequestParts<S> for TargetNodeExtractor
-where
-    WzNodeArc: FromRef<S>,
-    S: Send + Sync,
-{
-    type Rejection = Response;
-
-    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let path = Path::<String>::from_request_parts(parts, state)
-            .await
-            .map_err(|e| e.into_response())?;
-        let query = Query::<GetJsonParam>::from_request_parts(parts, state)
-            .await
-            .map_err(|e| e.into_response())?;
-
-        let root = WzNodeArc::from_ref(state);
-
-        let root = root.read().unwrap();
-
-        let force_parse = query.force_parse.unwrap_or(false);
-
-        let target = if force_parse {
-            root.at_path_parsed(&path).map_err(|e| match e {
-                node::Error::NodeNotFound => Error::NodeNotFound,
-                _ => Error::NodeError(e),
-            })
-        } else {
-            root.at_path(&path).ok_or(Error::NodeNotFound)
-        };
-
-        target
-            .map(|node| TargetNodeExtractor(node))
-            .map_err(|e| e.into_response())
     }
 }

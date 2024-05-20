@@ -23,6 +23,9 @@ pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
             layer_state,
             middlewares::root_check_middleware,
         ))
+        .route_layer(axum::middleware::from_fn(
+            middlewares::cache_control_from_query_middleware,
+        ))
         .with_state(node);
 
     let host = format!("127.0.0.1:{port}");

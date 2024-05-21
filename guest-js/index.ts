@@ -1,5 +1,11 @@
 import { invoke } from '@tauri-apps/api/core';
 
+export {
+  initAPIClient,
+  API_PATHES,
+  WzReaderAPIClient,
+} from './apiClient';
+
 export enum WzType {
   File = 'File',
   Directory = 'Directory',
@@ -31,10 +37,12 @@ export const MapWzType = {
   Directory: WzType.Directory,
   Image: WzType.Image,
   Null: WzType.Null,
+
   PNG: WzType.Png,
   Sound: WzType.Sound,
   Property: WzType.Property,
   Convex: WzType.Convex,
+
   Short: WzType.Short,
   Int: WzType.Int,
   Long: WzType.Long,

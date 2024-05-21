@@ -13,14 +13,12 @@ use axum::{
 };
 use wz_reader::WzNodeArc;
 
-use extractors::TargetNodeExtractor;
-
 pub async fn app(node: WzNodeArc, port: u16) -> crate::Result<()> {
     let layer_state = node.clone();
     let app = Router::new()
         .route("/", get(hello))
         .nest("/mapping", controller::mapping_router())
-        .route("/node/*path", get(get_print_full_path))
+        .nest("/node", controller::node_router())
         .route_layer(axum::middleware::from_fn_with_state(
             layer_state,
             middlewares::root_check_middleware,
@@ -43,12 +41,6 @@ async fn hello() -> &'static str {
     "Hello, World!"
 }
 
-async fn get_print_full_path(
-    TargetNodeExtractor(node): TargetNodeExtractor,
-) -> Result<String, Response> {
-    Ok(node.read().unwrap().get_full_path())
-}
-
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
@@ -57,6 +49,9 @@ impl IntoResponse for Error {
                 (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
             Error::SoundParseError(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
+            }
+            Error::ImageSendError => {
                 (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
             }
             Error::InitWzFailed => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),

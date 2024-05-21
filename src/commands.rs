@@ -44,9 +44,12 @@ pub(crate) async fn parse_node<R: Runtime>(
     state: State<'_, WzReader<R>>,
     path: String,
 ) -> Result<()> {
-    let node = state.node.read().unwrap();
+    let node_read = state.node.read().unwrap();
 
-    node.at_path_parsed(&path)?;
+    let _ = node_read
+        .at_path(&path)
+        .map(|n| node::parse_node(&n))
+        .ok_or(Error::NodeNotFound)?;
 
     Ok(())
 }
@@ -74,9 +77,16 @@ pub(crate) async fn get_node_info<R: Runtime>(
     state: State<'_, WzReader<R>>,
     path: String,
 ) -> Result<models::NodeInfo> {
-    let node = state.node.read().unwrap();
-
-    let node = node.at_path(&path).ok_or(Error::NodeNotFound)?;
+    let node = if path.is_empty() {
+        state.node.clone()
+    } else {
+        state
+            .node
+            .read()
+            .unwrap()
+            .at_path(&path)
+            .ok_or(Error::NodeNotFound)?
+    };
 
     let node_read = node.read().unwrap();
 
@@ -94,9 +104,16 @@ pub(crate) async fn get_childs_info<R: Runtime>(
     state: State<'_, WzReader<R>>,
     path: String,
 ) -> Result<Vec<models::NodeInfo>> {
-    let node = state.node.read().unwrap();
-
-    let node = node.at_path(&path).ok_or(Error::NodeNotFound)?;
+    let node = if path.is_empty() {
+        state.node.clone()
+    } else {
+        state
+            .node
+            .read()
+            .unwrap()
+            .at_path(&path)
+            .ok_or(Error::NodeNotFound)?
+    };
 
     let node_read = node.read().unwrap();
 

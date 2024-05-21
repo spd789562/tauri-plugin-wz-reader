@@ -1,4 +1,4 @@
 "$schema" = "schemas/schema.json"
 [default]
 description = "Allows initializing the plugin and reading wz files"
-permissions = ["allow-init", "allow-parse-node", "allow-unparse-node", "allow-get-node-info", "allow-get-child-info"]
+permissions = ["allow-init", "allow-parse-node", "allow-unparse-node", "allow-get-node-info", "allow-get-childs-info"]

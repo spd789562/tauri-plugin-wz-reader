@@ -53,6 +53,12 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
             Error::Io(_) => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response(),
+            Error::ImageParseError(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
+            }
+            Error::SoundParseError(_) => {
+                (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()).into_response()
+            }
             Error::InitWzFailed => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),
             Error::NotInitialized => (StatusCode::FORBIDDEN, self.to_string()).into_response(),
             Error::NodeError(_) => (StatusCode::BAD_REQUEST, self.to_string()).into_response(),

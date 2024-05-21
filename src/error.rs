@@ -1,5 +1,5 @@
 use serde::{ser::Serializer, Serialize};
-use wz_reader::node;
+use wz_reader::{node, property};
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -13,6 +13,10 @@ pub enum Error {
     NotInitialized,
     #[error("node error: {0}")]
     NodeError(#[from] node::Error),
+    #[error("image parse error")]
+    ImageParseError(#[from] property::png::WzPngParseError),
+    #[error("sound parse error")]
+    SoundParseError(#[from] property::sound::WzSoundError),
     #[error("node not found")]
     NodeNotFound,
     #[error("node type mismatch, can only use on {0}")]

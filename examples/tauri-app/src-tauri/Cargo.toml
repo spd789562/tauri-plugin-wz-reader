@@ -19,4 +19,5 @@ tauri-build = { version = "2.0.0-beta.15", default-features = false , features =
 
 [dependencies]
 tauri = { version = "2.0.0-beta.19", features = [] }
+tauri-plugin-dialog = "2.0.0-beta.7"
 tauri-plugin-wz-reader = { path = "../../../" }

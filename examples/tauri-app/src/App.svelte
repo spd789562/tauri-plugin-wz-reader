@@ -1,32 +1,24 @@
-<script>
-  import Greet from './lib/Greet.svelte'
-  import { execute } from 'tauri-plugin-wz-reader-api'
+<script lang="ts">
+import FileSelect from './components/FileSelect.svelte';
+import WzTreeRoot from './components/WzTreeRoot.svelte';
+import Preview from './components/Preview.svelte';
+import { apiClient } from './store/wz';
+import { initAPIClient } from 'tauri-plugin-wz-reader-api';
 
-	let response = ''
+async function init() {
+  apiClient.set(await initAPIClient());
+}
 
-	function updateResponse(returnValue) {
-    console.log(returnValue)
-		response += `[${new Date().toLocaleTimeString()}]` + (typeof returnValue === 'string' ? returnValue : JSON.stringify(returnValue)) + '<br>'
-	}
-
-	function _execute() {
-		execute().then(updateResponse).catch(updateResponse)
-	}
+init();
 </script>
 
 <main class="container">
-  <h1>Welcome to Tauri!</h1>
-  <p>
-    Click on the Tauri, Vite, and Svelte logos to learn more.
-  </p>
-
+  <div>simple wz browser svelte</div>
+  <FileSelect />
   <div class="row">
-    <Greet />
+    <div class="flex-1">
+      <WzTreeRoot />
+    </div>
+    <Preview />
   </div>
-
-  <div>
-    <button on:click="{_execute}">Execute</button>
-    <div>{@html response}</div>
-  </div>
-
 </main>

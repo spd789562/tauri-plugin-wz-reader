@@ -1,7 +1,7 @@
 {
-  "productName": "tauri-app",
+  "productName": "wz-reader-svelte",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.wz-reader-svelte.dev",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -18,7 +18,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "tauri-app",
+        "title": "wz-reader-svelte",
         "width": 800
       }
     ]
